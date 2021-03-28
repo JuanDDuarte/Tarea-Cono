@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <title>CONO </title>
+   <style>
+     html, body { margin: 0; padding: 0; overflow: hidden; }
+   </style>
+ </head>
+ <body>
+   <script src="js/three.min.js"></script>
+   <script>
+   var scene, aspect, camera, renderer;
+   var startTime = Date.now();
+
+
+   init();
+   animate();
+
+   function init()
+   {
+     scene = new THREE.Scene();
+     aspect = window.innerWidth / window.innerHeight;
+     camera = new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000);
+     renderer = new THREE.WebGLRenderer();
+     renderer.setSize( window.innerWidth, window.innerHeight );
+     document.body.appendChild( renderer.domElement );
+
+         var upArrow = false;
+         var size = 10;
+         var arrowSize = 2;
+         var divisions = size;
+         var origin = new THREE.Vector3( 0, 0, 0 );
+         var x = new THREE.Vector3( 1, 0, 0 );
+         var y = new THREE.Vector3( 0, 1, 0 );
+		 var z = new THREE.Vector3( 0, 0, 1 );
+		 var color1 = new THREE.Color( 0xFFFFFF );
+		 var color2 = new THREE.Color( 0x333333 );
+		 var colorR = new THREE.Color( 0xFF0000);
+		 var colorG = new THREE.Color( 0x33AA33 );
+		 var colorB = new THREE.Color( 0x333366 );
+       
+        var Ang= (90*Math.PI/180);
+        var AngB= ((360/20)*Math.PI/180);
+        var AngC= (70*Math.PI/180);
+       
+       
+
+		 var axesHelper = new THREE.AxesHelper( size );
+		 var gridHelperXY = new THREE.GridHelper( size, divisions, color1, color1);
+		 var gridHelperXZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		 var gridHelperYZ = new THREE.GridHelper( size, divisions, color2, color2 );
+		 gridHelperXY.rotateOnWorldAxis ( x, THREE.Math.degToRad(90) );
+		 gridHelperXZ.rotateOnWorldAxis ( y, THREE.Math.degToRad(90) );
+		 gridHelperYZ.rotateOnWorldAxis ( z, THREE.Math.degToRad(90) );
+		 var arrowX = new THREE.ArrowHelper( x, origin, arrowSize, colorR );
+		 var arrowY = new THREE.ArrowHelper( y, origin, arrowSize, colorG );
+		 var arrowZ = new THREE.ArrowHelper( z, origin, arrowSize, colorB );
+       
+       var onKeyDown = function ( event ) {
+				switch ( event.keyCode ) {
+                        
+                        case 38: // TRASLADAR EN DIRECCION POSITIVA
+						upArrow = true;
+						break;
+                }};
+       
+       	var onKeyUp = function ( event ) {
+				upArrow = false;
+			
+			};
+       document.addEventListener( 'keyup', onKeyUp, false );
+       
+       
+		 //GEOMETRIA DEL CONO
+          const geometry = new THREE.ConeGeometry( 1, 1, 10 );
+       
+		 var material = new THREE.MeshNormalMaterial({Color:0x33AA33});
+		  
+        var material2 = new THREE.MeshNormalMaterial( {Color:0x33AA33} );
+		
+
+		 // SE CREAN LOS CONO
+		 var Cono  = new THREE.Mesh( geometry, material );//cono
+	     var ConoB  = new THREE.Mesh( geometry, material2 );
+		 
+	
+       //SE LLAMAN LAS FUNCIONES
+        
+        
+  
+         //SE ROTA EN X
+		 Cono.applyMatrix(RotacionX(Ang));
+		
+       
+		 //SE TRASLADA EN Z
+		 Cono.applyMatrix(TraslacionZ(0.5));
+		 
+		 //SE UBICA EL VERTICE DE Z A X
+		
+		 Cono.applyMatrix(RotacionZ(AngB));
+		
+		 
+     
+       if(upArrow==true){
+		 		 
+           
+        //SE ROTA A X
+         Ang= (90*Math.PI/180);
+		 ConoB.applyMatrix(RotacionX(Ang));
+	 
+           
+		 //SE TRASLADA A Z
+		 ConoB.applyMatrix(TraslacionZ(0.5));
+		
+		 //SE CAMBIA AL VERTICE EN EJE X
+           
+		 AngB= ((360/20)*Math.PI/180);
+		 ConoB.applyMatrix(RotacionZ(AngB));
+
+		 //SE ESCALA EL CONO
+		 ConoB.applyMatrix(Escalarz(3));
+		
+		 //SE ROTA A X
+		 ConoB.applyMatrix(RotacionX(ang));
+	
+		 
+		 //SE ROTA A Z
+		 
+		 ConoB.applyMatrix(RotacionZ(AngC));
+	
+		 
+		 //SE TRASLADA EN Y
+		 ConoB.applyMatrix(TraslacionY(1));
+		
+		 //SE TRASLADA EN X
+		 ConoB.applyMatrix(TraslacionX(0.3));
+		
+		
+        scene.add( ConoB );
+       }
+	
+	
+
+       	 scene.add( Cono );
+		
+		 scene.add( gridHelperXZ );
+		 scene.add( arrowX );
+		 scene.add( arrowY );
+		 scene.add( arrowZ );
+       
+       
+		 camera.lookAt( origin );
+	 }
+
+	 function animate()
+	 {
+		 render();
+		 requestAnimationFrame( animate );
+	 }
+	 
+
+	 function render()
+	 {
+		 var dtime = Date.now()-startTime;
+		  camera.position.x = 5
+        camera.position.y = 4;
+        camera.position.z = 10
+		 camera.lookAt( 0, 0, 0 );
+		 renderer.render( scene, camera);
+	 }
+       
+       
+       
+       //FUNCIONES
+       
+       
+    	function TraslacionX(tx)
+	{
+	
+	
+		 var t = new THREE.Matrix4();
+
+		 
+		 t.set
+        
+        //SE TRASLADA EN EL EJE X
+			   ( 	1, 0, 0, tx,
+ 					0, 1, 0 ,0,
+ 					0, 0, 1, 0,
+ 					0, 0, 0, 1);
+
+			return t;
+	}   
+       
+       
+	
+    function TraslacionY(ty)
+	 {
+	
+	
+		 var t = new THREE.Matrix4();
+
+		
+		 t.set
+         
+          //SE TRASLADA EN EL EJE Y
+         
+			   ( 	1, 0, 0, 0,
+ 					0, 1, 0 ,ty,
+ 					0, 0, 1, 0,
+ 					0, 0, 0, 1);
+
+			return t;
+	}
+
+       
+       
+     function TraslacionZ(tz)
+	 {
+	
+	
+		 var t = new THREE.Matrix4();
+
+		
+		 t.set
+         
+         //SE TRASLADA EN EL EJE Z
+         
+			   ( 	1, 0, 0, 0,
+ 					0, 1, 0 ,0,
+ 					0, 0, 1, tz,
+ 					0, 0, 0, 1);
+
+			return t;
+	}
+       
+       
+       
+              
+	function Escalarz(sz)
+	{
+		 var t = new THREE.Matrix4();
+
+		 //SE ESCALA 
+		 t.set
+			   (      1, 0, 0, 0,
+ 				      0, 1, 0, 0,
+ 			          0, 0, sz, 0,
+ 				      0, 0, 0, 1);
+
+			return t;
+	}
+       
+       
+       
+
+	function RotacionZ(angulo)
+	 {
+	
+		 var cosz = Math.cos(angulo);
+		 var senz = Math.sin(angulo);
+		 var t = new THREE.Matrix4();
+
+		
+		 t.set
+         
+         
+         // SE ROTA SOLO UN VERTICE
+         
+			   ( (cosz), -(senz), 0,  0,
+ 				 (senz),  (cosz), 0,  0,
+ 			       0,       0,    1,  0,
+ 				   0,       0,    0,  1);
+
+			return t;
+	}
+       
+       
+       	 function RotacionX(angulo)
+	 {
+	
+		 var cosx = Math.cos(angulo);
+		 var senx = Math.sin(angulo);
+		 var t = new THREE.Matrix4();
+
+		 
+		 t.set
+         
+         //SE ROTA EN EL EJE X
+         
+         
+			   ( 	1,    0,      0,    0,
+ 					0, (cosx),-(senx) , 0,
+ 					0, (senx), (cosx),  0,
+ 					0,    0,      0,    1);
+
+			return t;
+	}
+
+	
+
+
+   </script>
+ </body>
+</html>
